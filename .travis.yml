@@ -32,34 +32,35 @@ env:
     - MAKEFLAGS="-j4"
     - PATH="/home/travis/riscv_install/bin:$PATH"
 jobs:
-  - before_install:
-      # make install destination
-      - mkdir -p $RISCV
-      # don't forget to clone riscv-tests/env
-      - cd riscv-tests
-      - git submodule update --init
-      - cd ..
-      # openocd also needs submodules
-      - cd riscv-openocd
-      - git submodule update --init
-      - cd ..
-      # actually use new gcc
-      - export CXX=g++-4.8 CC=gcc-4.8
-      - . build.common
+  include:
+    - before_install:
+        # make install destination
+        - mkdir -p $RISCV
+        # don't forget to clone riscv-tests/env
+        - cd riscv-tests
+        - git submodule update --init
+        - cd ..
+        # openocd also needs submodules
+        - cd riscv-openocd
+        - git submodule update --init
+        - cd ..
+        # actually use new gcc
+        - export CXX=g++-4.8 CC=gcc-4.8
+        - . build.common
 
-    # pexpect ends up in /usr/lib/python2.7/dist-packages, which is not part of the
-    # default python path.
-    script:
-      - build_project riscv-openocd --prefix=$RISCV --enable-remote-bitbang --enable-jtag_vpi --disable-werror
-  - script:
-    - build_project riscv-isa-sim --prefix=$RISCV
-  - script:
-    - build_project riscv-gnu-toolchain --prefix=$RISCV --disable-gdb
-  - script:
-    - build_project fsf-binutils-gdb --prefix=$RISCV --target=riscv64-unknown-elf
-  - script:
-    - CC= CXX= build_project riscv-pk --prefix=$RISCV --host=riscv64-unknown-elf
-  - script
-    - build_project riscv-tests --prefix=$RISCV/riscv64-unknown-elf
-  - script:
-    - PYTHONPATH=$PYTHONPATH:/usr/lib/python2.7/dist-packages make -C riscv-tests/build debug-check-fast
+      # pexpect ends up in /usr/lib/python2.7/dist-packages, which is not part of the
+      # default python path.
+      script:
+        - build_project riscv-openocd --prefix=$RISCV --enable-remote-bitbang --enable-jtag_vpi --disable-werror
+    - script:
+      - build_project riscv-isa-sim --prefix=$RISCV
+    - script:
+      - build_project riscv-gnu-toolchain --prefix=$RISCV --disable-gdb
+    - script:
+      - build_project fsf-binutils-gdb --prefix=$RISCV --target=riscv64-unknown-elf
+    - script:
+      - CC= CXX= build_project riscv-pk --prefix=$RISCV --host=riscv64-unknown-elf
+    - script
+      - build_project riscv-tests --prefix=$RISCV/riscv64-unknown-elf
+    - script:
+      - PYTHONPATH=$PYTHONPATH:/usr/lib/python2.7/dist-packages make -C riscv-tests/build debug-check-fast
