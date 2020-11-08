@@ -33,7 +33,8 @@ env:
     - PATH="/home/travis/riscv_install/bin:$PATH"
 jobs:
   include:
-    - before_install:
+    - stage: pre
+      before_install:
         # make install destination
         - mkdir -p $RISCV
         # don't forget to clone riscv-tests/env
@@ -52,15 +53,21 @@ jobs:
       # default python path.
       script:
         - build_project riscv-openocd --prefix=$RISCV --enable-remote-bitbang --enable-jtag_vpi --disable-werror
-    - script:
+    - stage: _1
+      script:
       - build_project riscv-isa-sim --prefix=$RISCV
-    - script:
+    - stage: _2
+      script:
       - build_project riscv-gnu-toolchain --prefix=$RISCV --disable-gdb
-    - script:
+    - stage: _3
+      script:
       - build_project fsf-binutils-gdb --prefix=$RISCV --target=riscv64-unknown-elf
-    - script:
+    - stage: _4
+      script:
       - CC= CXX= build_project riscv-pk --prefix=$RISCV --host=riscv64-unknown-elf
-    - script
+    - stage: _5
+      script
       - build_project riscv-tests --prefix=$RISCV/riscv64-unknown-elf
-    - script:
+    - stage: _6
+      script:
       - PYTHONPATH=$PYTHONPATH:/usr/lib/python2.7/dist-packages make -C riscv-tests/build debug-check-fast
