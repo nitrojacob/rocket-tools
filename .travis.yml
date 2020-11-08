@@ -55,19 +55,31 @@ jobs:
         - build_project riscv-openocd --prefix=$RISCV --enable-remote-bitbang --enable-jtag_vpi --disable-werror
     - stage: a 
       script:
+      - export CXX=g++-4.8 CC=gcc-4.8
+      - . build.common
       - build_project riscv-isa-sim --prefix=$RISCV
     - stage: b
       script:
+      - export CXX=g++-4.8 CC=gcc-4.8
+      - . build.common
       - build_project riscv-gnu-toolchain --prefix=$RISCV --disable-gdb
     - stage: c
       script:
+      - export CXX=g++-4.8 CC=gcc-4.8
+      - . build.common
       - build_project fsf-binutils-gdb --prefix=$RISCV --target=riscv64-unknown-elf
     - stage: d
       script:
+      - export CXX=g++-4.8 CC=gcc-4.8
+      - . build.common
       - CC= CXX= build_project riscv-pk --prefix=$RISCV --host=riscv64-unknown-elf
     - stage: e
       script:
+      - export CXX=g++-4.8 CC=gcc-4.8
+      - . build.common
       - build_project riscv-tests --prefix=$RISCV/riscv64-unknown-elf
     - stage: f
       script:
+      - export CXX=g++-4.8 CC=gcc-4.8
+      - . build.common
       - PYTHONPATH=$PYTHONPATH:/usr/lib/python2.7/dist-packages make -C riscv-tests/build debug-check-fast
